@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using TeduMicroservices.IDP.Common;
 using TeduMicroservices.IDP.Entities;
 using TeduMicroservices.IDP.Persistence;
@@ -79,5 +80,24 @@ public static class ServiceExtensions
             })
             .AddEntityFrameworkStores<TeduIdentityContext>()
             .AddDefaultTokenProviders();
+    }
+
+    public static void ConfigureSwagger(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen(c =>
+        {
+            c.EnableAnnotations();
+            c.SwaggerDoc("v1", new OpenApiInfo()
+            {
+                Title = "Tedu Identity Server API",
+                Version = "v1",
+                Contact = new OpenApiContact()
+                {
+                    Name = "Tedu Identity Service",
+                    Email = "duynguyen@gmail.com"
+                }
+            });
+        });
     }
 }
