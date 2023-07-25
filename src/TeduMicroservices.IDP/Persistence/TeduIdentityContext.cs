@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TeduMicroservices.IDP.Entities;
-using TeduMicroservices.IDP.Entities.Configuration;
 
 namespace TeduMicroservices.IDP.Persistence;
 

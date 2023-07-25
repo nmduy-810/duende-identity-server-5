@@ -1,5 +1,7 @@
 using Serilog;
 using Serilog.Sinks.Elasticsearch;
+using TeduMicroservices.IDP.Common.Domains;
+using TeduMicroservices.IDP.Repositories;
 using TeduMicroservices.IDP.Services;
 using TeduMicroservices.IDP.Services.EmailService;
 
@@ -64,7 +66,9 @@ internal static class HostingExtensions
         
         builder.Services.ConfigureIdentity(builder.Configuration);
         builder.Services.ConfigureIdentityServer(builder.Configuration);
-
+        builder.Services.AddTransient(typeof(IUnitOfWork), typeof(UnitOfWork));
+        builder.Services.AddTransient(typeof(IRepositoryBase<,>), typeof(RepositoryBase<,>));
+        builder.Services.AddScoped<IRepositoryManager, RepositoryManager>();
         return builder.Build();
     }
     
