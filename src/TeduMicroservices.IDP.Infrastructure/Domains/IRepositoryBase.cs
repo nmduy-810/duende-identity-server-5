@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace TeduMicroservices.IDP.Common.Domains;
+namespace TeduMicroservices.IDP.Infrastructure.Domains;
 
 public interface IRepositoryBase<T, TK> where T : EntityBase<TK>
 {
@@ -14,8 +14,8 @@ public interface IRepositoryBase<T, TK> where T : EntityBase<TK>
     IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false,
         params Expression<Func<T, object>>[] includeProperties);
 
-    Task<T> GetByIdAsync(TK id);
-    Task<T> GetByIdAsync(TK id, params Expression<Func<T, object>>[] includeProperties);
+    Task<T?> GetByIdAsync(TK id);
+    Task<T?> GetByIdAsync(TK id, params Expression<Func<T, object>>[] includeProperties);
 
     #endregion
 

@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using TeduMicroservices.IDP.Entities;
+using TeduMicroservices.IDP.Infrastructure.Entities;
 
-namespace TeduMicroservices.IDP.Persistence;
+namespace TeduMicroservices.IDP.Infrastructure.Persistence;
 
 public class TeduIdentityContext : IdentityDbContext<User>
 {
@@ -11,7 +11,7 @@ public class TeduIdentityContext : IdentityDbContext<User>
         
     }
     
-    public DbSet<Permission> Permissions { get; set; }
+    public DbSet<Permission> Permissions { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

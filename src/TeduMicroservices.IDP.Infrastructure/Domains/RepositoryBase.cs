@@ -1,9 +1,9 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using TeduMicroservices.IDP.Persistence;
+using TeduMicroservices.IDP.Infrastructure.Persistence;
 
-namespace TeduMicroservices.IDP.Common.Domains;
+namespace TeduMicroservices.IDP.Infrastructure.Domains;
 
 public class RepositoryBase<T, TK> : IRepositoryBase<T, TK>
     where T : EntityBase<TK>
@@ -47,11 +47,11 @@ public class RepositoryBase<T, TK> : IRepositoryBase<T, TK>
         return items;
     }
 
-    public Task<T> GetByIdAsync(TK id) 
-        => FindByCondition(x => x.Id.Equals(id)).FirstOrDefaultAsync();
+    public Task<T?> GetByIdAsync(TK id) 
+        => FindByCondition(x => x.Id != null && x.Id.Equals(id)).FirstOrDefaultAsync();
 
-    public Task<T> GetByIdAsync(TK id, params Expression<Func<T, object>>[] includeProperties)
-        => FindByCondition(x => x.Id.Equals(id), trackChanges:false, includeProperties)
+    public Task<T?> GetByIdAsync(TK id, params Expression<Func<T, object>>[] includeProperties)
+        => FindByCondition(x => x.Id != null && x.Id.Equals(id), trackChanges:false, includeProperties)
             .FirstOrDefaultAsync();
 
     #endregion
@@ -69,7 +69,7 @@ public class RepositoryBase<T, TK> : IRepositoryBase<T, TK>
     {
         if (_dbContext.Entry(entity).State == EntityState.Unchanged) return;
         
-        T exist = await _dbContext.Set<T>().FindAsync(entity.Id);
+        T? exist = await _dbContext.Set<T>().FindAsync(entity.Id);
         _dbContext.Entry(exist).CurrentValues.SetValues(entity);
         await SaveChangesAsync();
     }

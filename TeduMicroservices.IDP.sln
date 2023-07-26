@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{11413F30-CD3
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeduMicroservices.IDP.Presentation", "src\TeduMicroservices.IDP.Presentation\TeduMicroservices.IDP.Presentation.csproj", "{CDBC6081-FAEE-4011-BFBD-15DF3118227E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeduMicroservices.IDP.Infrastructure", "src\TeduMicroservices.IDP.Infrastructure\TeduMicroservices.IDP.Infrastructure.csproj", "{BB054774-A063-47C3-A714-97BEAE99EE58}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,9 +33,14 @@ Global
 		{CDBC6081-FAEE-4011-BFBD-15DF3118227E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CDBC6081-FAEE-4011-BFBD-15DF3118227E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CDBC6081-FAEE-4011-BFBD-15DF3118227E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB054774-A063-47C3-A714-97BEAE99EE58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB054774-A063-47C3-A714-97BEAE99EE58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB054774-A063-47C3-A714-97BEAE99EE58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB054774-A063-47C3-A714-97BEAE99EE58}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C7A55E43-4444-40DB-BA8B-518E5C573440} = {11413F30-CD37-47AF-A5C1-449FD480B2EA}
 		{CDBC6081-FAEE-4011-BFBD-15DF3118227E} = {11413F30-CD37-47AF-A5C1-449FD480B2EA}
+		{BB054774-A063-47C3-A714-97BEAE99EE58} = {11413F30-CD37-47AF-A5C1-449FD480B2EA}
 	EndGlobalSection
 EndGlobal

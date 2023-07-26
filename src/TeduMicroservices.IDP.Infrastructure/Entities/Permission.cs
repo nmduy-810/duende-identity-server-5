@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
-using TeduMicroservices.IDP.Common.Domains;
+using TeduMicroservices.IDP.Infrastructure.Domains;
 
-namespace TeduMicroservices.IDP.Entities;
+namespace TeduMicroservices.IDP.Infrastructure.Entities;
 
 public class Permission : EntityBase<long>
 {
@@ -24,7 +24,7 @@ public class Permission : EntityBase<long>
 
     [ForeignKey("RoleId")] 
     
-    public virtual IdentityRole Role { get; set; }
+    public virtual IdentityRole Role { get; set; } = default!;
 
     public Permission(string function, string command, string roleId)
     {
