@@ -1,6 +1,8 @@
+using Dapper;
 using TeduMicroservices.IDP.Infrastructure.Domains;
 using TeduMicroservices.IDP.Infrastructure.Entities;
 using TeduMicroservices.IDP.Infrastructure.Persistence;
+using TeduMicroservices.IDP.Infrastructure.ViewModels;
 
 namespace TeduMicroservices.IDP.Infrastructure.Repositories;
 
@@ -10,9 +12,13 @@ public class PermissionRepository : RepositoryBase<Permission, long>, IPermissio
     {
     }
 
-    public Task<IEnumerable<Permission>> GetPermissionsByRole(string roleId, bool trackChanges)
+    public async Task<IReadOnlyList<PermissionViewModel>> GetPermissionsByRole(string roleId)
     {
-        throw new NotImplementedException();
+        var parameters = new DynamicParameters();
+        parameters.Add("@roleId", roleId);
+        
+        var result = await QueryAsync<PermissionViewModel>("Get_Permission_By_RoleId", parameters);
+        return result;
     }
 
     public void UpdatePermissionsByRoleId(string roleId, IEnumerable<Permission> permissions, bool trackChanges)

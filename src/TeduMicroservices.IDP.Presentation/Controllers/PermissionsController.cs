@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using TeduMicroservices.IDP.Infrastructure.Repositories;
 
 namespace TeduMicroservices.IDP.Presentation.Controllers;
 
@@ -6,8 +7,17 @@ namespace TeduMicroservices.IDP.Presentation.Controllers;
 [Route("api/[controller]")]
 public class PermissionsController : ControllerBase
 {
-    public PermissionsController()
+    private readonly IRepositoryManager _repositoryManager;
+    
+    public PermissionsController(IRepositoryManager repositoryManager)
     {
-        
+        _repositoryManager = repositoryManager;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetPermissions(string roleId)
+    {
+        var result = await _repositoryManager.Permissions.GetPermissionsByRole(roleId);
+        return Ok(result);
     }
 }

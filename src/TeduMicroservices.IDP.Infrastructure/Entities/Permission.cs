@@ -26,6 +26,11 @@ public class Permission : EntityBase<long>
     
     public virtual IdentityRole Role { get; set; } = default!;
 
+    public Permission()
+    {
+        
+    }
+
     public Permission(string function, string command, string roleId)
     {
         Function = function;

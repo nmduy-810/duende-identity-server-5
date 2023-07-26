@@ -1,6 +1,9 @@
+using System.Data;
 using System.Linq.Expressions;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using TeduMicroservices.IDP.Infrastructure.Exceptions;
 using TeduMicroservices.IDP.Infrastructure.Persistence;
 
 namespace TeduMicroservices.IDP.Infrastructure.Domains;
@@ -93,6 +96,40 @@ public class RepositoryBase<T, TK> : IRepositoryBase<T, TK>
     }
 
     #endregion
+    
+    #region Dapper
+
+    public async Task<IReadOnlyList<TModel>> QueryAsync<TModel>(string sql, object? param, 
+        CommandType? commandType = CommandType.StoredProcedure, IDbTransaction? transaction = null, int? commandTimeout = 30)
+        where TModel: EntityBase<TK>
+    {
+        return (await _dbContext.Connection.QueryAsync<TModel>(sql, param, 
+            transaction, 30, CommandType.StoredProcedure)).AsList();
+    }
+
+    public async Task<TModel> QueryFirstOrDefaultAsync<TModel>(string sql, object? param, 
+        CommandType? commandType = CommandType.StoredProcedure, IDbTransaction? transaction = null, int? commandTimeout = 30)
+        where TModel: EntityBase<TK>
+    {
+        var entity = await _dbContext.Connection.QueryFirstOrDefaultAsync<TModel>(sql, param, transaction, commandTimeout, commandType);
+        if (entity == null) throw new EntityNotFoundException();
+        return entity;
+    }
+
+    public async Task<TModel> QuerySingleAsync<TModel>(string sql, object? param, 
+        CommandType? commandType = CommandType.StoredProcedure, IDbTransaction? transaction = null, int? commandTimeout = 30)
+        where TModel: EntityBase<TK>
+    {
+        return await _dbContext.Connection.QuerySingleAsync<TModel>(sql, param, transaction, commandTimeout, commandType);
+    }
+
+    public async Task<int> ExecuteAsync(string sql, object? param, 
+        CommandType? commandType = CommandType.StoredProcedure, IDbTransaction? transaction = null, int? commandTimeout = 30)
+    {
+        return await _dbContext.Connection.ExecuteAsync(sql, param, transaction, commandTimeout, commandType);
+    }
+
+    #endregion Dapper
     
     public Task<int> SaveChangesAsync() => _unitOfWork.CommitAsync();
 
