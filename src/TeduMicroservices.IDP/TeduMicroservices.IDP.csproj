@@ -18,10 +18,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Controllers\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <ProjectReference Include="..\TeduMicroservices.IDP.Infrastructure\TeduMicroservices.IDP.Infrastructure.csproj" />
 	  <ProjectReference Include="..\TeduMicroservices.IDP.Presentation\TeduMicroservices.IDP.Presentation.csproj" />
 	</ItemGroup>
