@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Serilog.Sinks.Elasticsearch;
 using TeduMicroservices.IDP.Infrastructure.Domains;
@@ -59,9 +60,12 @@ internal static class HostingExtensions
         builder.Services.AddRazorPages();
         
         // Fix can't login same site
-        //builder.Services.ConfigureCookiePolicy();
+        builder.Services.ConfigureCookiePolicy();
 
         builder.Services.AddConfigurationSettings(builder.Configuration);
+        
+        builder.Services.AddAutoMapper(x => x.AddProfile(new MappingProfile()));
+        
         builder.Services.AddScoped<IEmailSender, SmtpMailService>();
         builder.Services.ConfigureCors();
         
@@ -75,9 +79,14 @@ internal static class HostingExtensions
         {
             config.RespectBrowserAcceptHeader = true;
             config.ReturnHttpNotAcceptable = true;
+            config.Filters.Add(new ProducesAttribute("application/json", "text/plain", "text/json"));
         }).AddApplicationPart(typeof(AssemblyReference).Assembly);
         
+        builder.Services.ConfigureAuthentication();
+        builder.Services.ConfigureAuthorization();
         builder.Services.ConfigureSwagger(builder.Configuration);
+        builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
+        
         return builder.Build();
     }
     
@@ -96,13 +105,18 @@ internal static class HostingExtensions
         app.UseCors("CorsPolicy");
 
         app.UseSwagger();
-        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Tedu Identity API"));
+        app.UseSwaggerUI(c =>
+        {
+            c.OAuthClientId("tedu_microservices_swagger");
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "Tedu Identity API");
+            c.DisplayRequestDuration();
+        });
         
         app.UseRouting();
 
         // fix can't login same site
         // set cookie policy before authentication/authorization setup
-        //app.UseCookiePolicy();
+        app.UseCookiePolicy();
             
         app.UseIdentityServer();
 
@@ -110,7 +124,7 @@ internal static class HostingExtensions
         app.UseAuthorization();
         app.UseEndpoints(endpoints =>
         {
-            endpoints.MapDefaultControllerRoute().RequireAuthorization();
+            endpoints.MapDefaultControllerRoute().RequireAuthorization("Bearer");
             endpoints.MapRazorPages().RequireAuthorization();
         });
 

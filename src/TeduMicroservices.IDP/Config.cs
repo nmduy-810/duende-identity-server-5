@@ -30,8 +30,8 @@ public static class Config
         {
             new ApiResource("tedu_microservices_api", "Tedu Microservices API")
             {
-                Scopes = new List<string>() { "tedu_microservices_api.read", "tedu_microservices_api.write" },
-                UserClaims = new List<string>() { "role" }
+                Scopes = new List<string> { "tedu_microservices_api.read", "tedu_microservices_api.write" },
+                UserClaims = new List<string> { "roles" }
             }
         };
 
@@ -42,30 +42,32 @@ public static class Config
             {
                 ClientName = "Tedu Microservices Swagger Client",
                 ClientId = "tedu_microservices_swagger",
+
                 AllowedGrantTypes = GrantTypes.Implicit,
                 AllowAccessTokensViaBrowser = true,
                 RequireConsent = false,
                 AccessTokenLifetime = 60 * 60 * 2,
+                
                 RedirectUris = new List<string>()
                 {
-                    "http://localhost:5001/swagger/oauth-redirect.html"
+                    "http://localhost:5001/swagger/oauth2-redirect.html",
                 },
                 PostLogoutRedirectUris = new List<string>()
                 {
-                    "http://localhost:5001/swagger/oauth2-redirect.html"
+                    "http://localhost:5001/swagger/oauth2-redirect.html",
                 },
                 AllowedCorsOrigins = new List<string>()
                 {
-                    "http://localhost:5001"
+                    "http://localhost:5001",
                 },
                 AllowedScopes =
                 {
                     IdentityServerConstants.StandardScopes.OpenId,
                     IdentityServerConstants.StandardScopes.Profile,
                     IdentityServerConstants.StandardScopes.Email,
-                    "role",
                     "tedu_microservices_api.read",
-                    "tedu_microservices_api.write"
+                    "tedu_microservices_api.write",
+                    "roles"
                 }
             },
             new()

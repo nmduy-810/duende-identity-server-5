@@ -1,6 +1,3 @@
 namespace TeduMicroservices.IDP.Infrastructure.ViewModels;
 
-public class PermissionUserViewModel
-{
-    
-}
+public abstract record PermissionUserViewModel(string Function, string Command);

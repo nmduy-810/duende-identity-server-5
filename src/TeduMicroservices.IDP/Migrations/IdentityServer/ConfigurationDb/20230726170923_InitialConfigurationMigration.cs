@@ -5,10 +5,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace TeduMicroservices.IDP.Migrations.IdentityServer.ConfigurationDb
 {
-    /// <inheritdoc />
     public partial class InitialConfigurationMigration : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -646,7 +644,6 @@ namespace TeduMicroservices.IDP.Migrations.IdentityServer.ConfigurationDb
                 unique: true);
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

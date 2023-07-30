@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage;
 using TeduMicroservices.IDP.Infrastructure.Domains;
@@ -8,23 +9,27 @@ namespace TeduMicroservices.IDP.Infrastructure.Repositories;
 
 public class RepositoryManager : IRepositoryManager
 {
-    public UserManager<User> UserManager { get; }
-    public RoleManager<IdentityRole> RoleManager { get; }
-    
     private readonly IUnitOfWork _unitOfWork;
     private readonly TeduIdentityContext _dbContext;
     private readonly Lazy<IPermissionsRepository> _permissionRepository;
+    private readonly IMapper _mapper;
 
-    public RepositoryManager(TeduIdentityContext dbContext, IUnitOfWork unitOfWork, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+    public RepositoryManager(TeduIdentityContext dbContext, IUnitOfWork unitOfWork, UserManager<User> userManager,
+        RoleManager<IdentityRole> roleManager, IMapper mapper)
     {
-        UserManager = userManager;
-        RoleManager = roleManager;
         _dbContext = dbContext;
         _unitOfWork = unitOfWork;
-        _permissionRepository = new Lazy<IPermissionsRepository>(() => new PermissionRepository(_dbContext, unitOfWork));
+        UserManager = userManager;
+        RoleManager = roleManager;
+        _mapper = mapper;
+
+        _permissionRepository = new Lazy<IPermissionsRepository>(() =>
+            new PermissionRepository(_dbContext, _unitOfWork, userManager, _mapper));
     }
 
-    public IPermissionsRepository Permissions => _permissionRepository.Value;
+    public UserManager<User> UserManager { get; }
+    public RoleManager<IdentityRole> RoleManager { get; }
+    public IPermissionsRepository Permission => _permissionRepository.Value;
     
     public Task<int> SaveAsync() => _unitOfWork.CommitAsync();
 

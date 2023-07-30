@@ -47,15 +47,19 @@ public static class ServiceExtensions
             .AddTestUsers(TestUsers.Users)*/
             .AddConfigurationStore(opt =>
             {
-                opt.ConfigureDbContext = c => c.UseSqlServer(
-                    connectionString,
-                    builder => builder.MigrationsAssembly("TeduMicroservices.IDP"));
+                opt.ConfigureDbContext = c =>
+                {
+                    if (connectionString != null)
+                        c.UseSqlServer(connectionString, builder => builder.MigrationsAssembly("TeduMicroservices.IDP"));
+                };
             })
             .AddOperationalStore(opt =>
             {
-                opt.ConfigureDbContext = c => c.UseSqlServer(
-                    connectionString,
-                    builder => builder.MigrationsAssembly("TeduMicroservices.IDP"));
+                opt.ConfigureDbContext = c =>
+                {
+                    if (connectionString != null) 
+                        c.UseSqlServer(connectionString, builder => builder.MigrationsAssembly("TeduMicroservices.IDP"));
+                };
             })
             .AddAspNetIdentity<User>()
             .AddProfileService<IdentityProfileService>();
@@ -65,9 +69,12 @@ public static class ServiceExtensions
     {
         var connectionString = configuration.GetConnectionString("IdentitySqlConnection");
         services
-            .AddDbContext<TeduIdentityContext>(options => options
-                .UseSqlServer(connectionString))
-            .AddIdentity<User, IdentityRole>(opt =>
+            .AddDbContext<TeduIdentityContext>(options =>
+            {
+                if (connectionString != null)
+                    options.UseSqlServer(connectionString);
+                
+            }).AddIdentity<User, IdentityRole>(opt =>
             {
                 opt.Password.RequireDigit = false;
                 opt.Password.RequiredLength = 6;
@@ -79,6 +86,7 @@ public static class ServiceExtensions
                 opt.Lockout.MaxFailedAccessAttempts = 3;
             })
             .AddEntityFrameworkStores<TeduIdentityContext>()
+            .AddUserStore<TeduUserStore>()
             .AddDefaultTokenProviders();
     }
 
@@ -88,16 +96,71 @@ public static class ServiceExtensions
         services.AddSwaggerGen(c =>
         {
             c.EnableAnnotations();
-            c.SwaggerDoc("v1", new OpenApiInfo()
+            c.SwaggerDoc("v1", new OpenApiInfo
             {
                 Title = "Tedu Identity Server API",
                 Version = "v1",
-                Contact = new OpenApiContact()
+                Contact = new OpenApiContact
                 {
                     Name = "Tedu Identity Service",
-                    Email = "duynguyen@gmail.com"
+                    Email = "kietpham.dev@gmail.com",
+                    Url = new Uri("https://kietpham.dev")
+                }
+            });
+            var identityServerBaseUrl = configuration.GetSection("IdentityServer:BaseUrl").Value;
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Type = SecuritySchemeType.OAuth2,
+                Flows = new OpenApiOAuthFlows
+                {
+                    Implicit = new OpenApiOAuthFlow
+                    {
+                        AuthorizationUrl = new Uri($"{identityServerBaseUrl}/connect/authorize"),
+                        Scopes = new Dictionary<string, string>
+                        {
+                            { "tedu_microservices_api.read", "Tedu Microservices API Read Scope" },
+                            { "tedu_microservices_api.write", "Tedu Microservices API Write Scope" }
+                        }
+                    }
+                }
+            });
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                    },
+                    new List<string>
+                    {
+                        "tedu_microservices_api.read", 
+                        "tedu_microservices_api.write"
+                    }
                 }
             });
         });
+    }
+    
+    public static void ConfigureAuthentication(this IServiceCollection services)
+    {
+        services
+            .AddAuthentication()
+            .AddLocalApi("Bearer", option =>
+            {
+                option.ExpectedScope = "tedu_microservices_api.read";
+            });
+    }
+
+    public static void ConfigureAuthorization(this IServiceCollection services)
+    {
+        services.AddAuthorization(
+            options =>
+            {
+                options.AddPolicy("Bearer", policy =>
+                {
+                    policy.AddAuthenticationSchemes("Bearer");
+                    policy.RequireAuthenticatedUser();
+                });
+            });
     }
 }
